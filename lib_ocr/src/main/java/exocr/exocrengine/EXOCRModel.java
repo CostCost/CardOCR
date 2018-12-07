@@ -9,7 +9,6 @@ import android.os.Parcelable;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 
 /**
@@ -145,22 +144,22 @@ public final class EXOCRModel implements Parcelable {
 
     public void SetBitmap(final Context context, Bitmap bitmap) {
 
+        if(null == bitmap)
+            return;
+
         try {
 
             final String local;
 
             if (type == 1) {
-                local = context.getFilesDir().getAbsolutePath() + "/card_front.jpg";
+                local = context.getCacheDir().getAbsolutePath() + "/card_front.jpg";
             } else if (type == 2) {
-                local = context.getFilesDir().getAbsolutePath() + "/card_back.jpg";
+                local = context.getCacheDir().getAbsolutePath() + "/card_back.jpg";
             } else {
                 return;
             }
 
             final File file = new File(local);
-            if (!file.exists()) {
-                file.getParentFile().mkdirs();
-            }
             if (file.exists()) {
                 file.delete();
             }

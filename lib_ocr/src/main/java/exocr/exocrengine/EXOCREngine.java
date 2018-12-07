@@ -26,9 +26,14 @@ public final class EXOCREngine {
     }
 
     private static final byte[] bResultBuf = new byte[4096];
+    private static final int[] rects = new int[32];
 
-    public static final byte[] obtain() {
+    public static final byte[] obtainByte() {
         return bResultBuf;
+    }
+
+    public static final int[] obtainRect() {
+        return rects;
     }
 
     public static final void clearDict() {
