@@ -154,20 +154,29 @@ public class OcrSurfaceView extends SurfaceView implements SurfaceHolder.Callbac
 
             if (code > 0) {
 
-                try {
+                final int[] rects = EXOCREngine.obtainRect();
+                final Bitmap imcard = EXOCREngine.decode(data, width, height, obtain, obtain.length, rects);
 
-                    final int[] rects = EXOCREngine.obtainRect();
-                    final Bitmap imcard = EXOCREngine.decode(data, width, height, obtain, obtain.length, rects);
-                    EXOCRModel idcard = EXOCRModel.decode(data, code);
-                    idcard.SetBitmap(getContext().getApplicationContext(), imcard);
+                final byte[] finalObtain = obtain;
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
 
-                    if (null != listener) {
-                        listener.onSucc(idcard);
+                        EXOCRModel idcard = EXOCRModel.decode(finalObtain, code);
+
+                        try {
+                            idcard.SetBitmap(getContext().getApplicationContext(), imcard);
+                        } catch (Exception e) {
+                            Log.e("kalu", e.getMessage(), e);
+                        }
+
+
+                        if (null != listener) {
+                            listener.onSucc(idcard);
+                        }
+
                     }
-
-                } catch (Exception e) {
-                    Log.e("kalu", e.getMessage(), e);
-                }
+                }).start();
 
                 mHandler.removeCallbacksAndMessages(null);
                 Log.e("kalu11", "handleMessage ==> size = " + data.length + ", code = " + code);
