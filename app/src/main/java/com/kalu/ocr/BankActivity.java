@@ -1,19 +1,11 @@
 package com.kalu.ocr;
 
+import android.app.Activity;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import exocr.activity.OcrActivity;
-import exocr.bankcard.CardRecoActivity;
-import exocr.exocrengine.EXOCRDict;
-import exocr.exocrengine.EXOCRModel;
-
-public final class BankActivity extends OcrActivity {
+public final class BankActivity extends Activity {
 
     public static final int REQUEST_CODE_FRONT = 1000;
     public static final int REQUEST_CODE_BACK = 1001;

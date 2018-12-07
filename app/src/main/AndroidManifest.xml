@@ -32,27 +32,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".IdcardActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait" />
-
-        <activity
-            android:name=".CaptureActivity"
-            android:configChanges="orientation"
-            android:screenOrientation="landscape" />
-
         <activity
             android:name=".BankActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait" />
 
-        <!--<activity-->
-            <!--android:name="exocr.bankcard.CardRecoActivity"-->
-            <!--android:configChanges="orientation"-->
-            <!--android:screenOrientation="portrait" />-->
-
+        <activity
+            android:name=".TestActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="landscape" />
     </application>
 
 </manifest>

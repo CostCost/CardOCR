@@ -1,5 +1,6 @@
 package com.kalu.ocr;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -8,11 +9,9 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import exocr.activity.OcrActivity;
 import exocr.exocrengine.EXOCRModel;
-import exocr.exocrengine.EXOCRDict;
 
-public final class IdcardActivity extends OcrActivity {
+public final class IdcardActivity extends Activity {
 
     public static final int REQUEST_CODE_FRONT = 1000;
     public static final int REQUEST_CODE_BACK = 1001;
@@ -22,14 +21,11 @@ public final class IdcardActivity extends OcrActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_idcard);
 
-        boolean succ = EXOCRDict.InitDict(this);
-        if (!succ) return;
-
         findViewById(R.id.card_front).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent scanIntent = new Intent(getApplicationContext(), CaptureActivity.class);
-                scanIntent.putExtra(CaptureActivity.INTNET_FRONT, true);
+                Intent scanIntent = new Intent(getApplicationContext(), TestActivity.class);
+                scanIntent.putExtra(TestActivity.FRONT, true);
                 startActivityForResult(scanIntent, REQUEST_CODE_FRONT);
             }
         });
@@ -37,8 +33,8 @@ public final class IdcardActivity extends OcrActivity {
         findViewById(R.id.card_back).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent scanIntent = new Intent(getApplicationContext(), CaptureActivity.class);
-                scanIntent.putExtra(CaptureActivity.INTNET_FRONT, false);
+                Intent scanIntent = new Intent(getApplicationContext(), TestActivity.class);
+                scanIntent.putExtra(TestActivity.FRONT, false);
                 startActivityForResult(scanIntent, REQUEST_CODE_BACK);
             }
         });
@@ -49,10 +45,10 @@ public final class IdcardActivity extends OcrActivity {
         super.onActivityResult(requestCode, resultCode, data);
         Log.e("kalu", "requestCode = " + requestCode + ", resultCode = " + resultCode);
 
-        if (requestCode == REQUEST_CODE_FRONT && resultCode == CaptureActivity.RESULT_CODE && null != data) {
+        if (requestCode == REQUEST_CODE_FRONT && resultCode == TestActivity.RESULT_CODE && null != data) {
 
             final Bundle extras = data.getExtras();
-            final EXOCRModel result = extras.getParcelable(CaptureActivity.EXTRA_SCAN_RESULT);
+            final EXOCRModel result = extras.getParcelable(TestActivity.RESULT);
             Log.e("kalu", "result = " + result.toString());
 
             final TextView name = findViewById(R.id.card_name);
@@ -76,10 +72,10 @@ public final class IdcardActivity extends OcrActivity {
             final ImageView self = findViewById(R.id.card_self);
             self.setImageBitmap(BitmapFactory.decodeFile(result.bitmapPath));
 
-        } else if (requestCode == REQUEST_CODE_BACK && resultCode == CaptureActivity.RESULT_CODE && null != data) {
+        } else if (requestCode == REQUEST_CODE_BACK && resultCode == TestActivity.RESULT_CODE && null != data) {
 
             final Bundle extras = data.getExtras();
-            final EXOCRModel result = extras.getParcelable(CaptureActivity.EXTRA_SCAN_RESULT);
+            final EXOCRModel result = extras.getParcelable(TestActivity.RESULT);
             Log.e("kalu", "result = " + result.toString());
 
             final TextView office = findViewById(R.id.card_office);

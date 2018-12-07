@@ -3,14 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <SurfaceView
-        android:id="@+id/IDpreview_view"
+    <lib.kalu.ocr.OcrSurfaceView
+        android:id="@+id/surface"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_centerInParent="true"
         android:layout_gravity="center" />
 
-    <exocr.view.CaptureView
+    <lib.kalu.ocr.CaptureView
         android:id="@+id/captuer_scan"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

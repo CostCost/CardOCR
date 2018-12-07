@@ -1,4 +1,4 @@
-package exocr.view;
+package lib.kalu.ocr;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
@@ -40,7 +40,7 @@ public final class CaptureView extends View {
 
         final int canvasHeight = canvas.getHeight();
         final int canvasWidth = canvas.getWidth();
-        Log.e("kalu1", "canvasHeight = " + canvasHeight + ", canvasWidth = " + canvasWidth);
+        // Log.e("kalu1", "canvasHeight = " + canvasHeight + ", canvasWidth = " + canvasWidth);
 
         final Paint mPaint = new Paint();
         mPaint.clearShadowLayer();
