@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -144,7 +145,7 @@ public final class EXOCRModel implements Parcelable {
 
     public void SetBitmap(final Context context, Bitmap bitmap) {
 
-        if(null == bitmap)
+        if (null == bitmap)
             return;
 
         try {
@@ -175,6 +176,15 @@ public final class EXOCRModel implements Parcelable {
             }
 
         } catch (IOException e) {
+        }
+    }
+
+    public final boolean isOk(final boolean front) {
+
+        if (front) {
+            return type == 1;
+        } else {
+            return type == 2;
         }
     }
 

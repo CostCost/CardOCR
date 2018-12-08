@@ -6,8 +6,8 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.TextView;
 
-import exocr.exocrengine.EXOCRModel;
 import lib.kalu.ocr.CaptureView;
 import lib.kalu.ocr.OcrSurfaceView;
 
@@ -33,15 +33,21 @@ public class TestActivity extends Activity {
         capture.setFront(isFront);
         setContentView(root);
 
+        final TextView text = findViewById(R.id.text);
+
         final OcrSurfaceView surface = root.findViewById(R.id.surface);
         surface.setOnOcrChangeListener(exocrModel -> {
 
             runOnUiThread(() -> {
 
-                Intent intent = new Intent();
-                intent.putExtra(RESULT, exocrModel);
-                setResult(RESULT_CODE, intent);
-                onBackPressed();
+                if (exocrModel.isOk(isFront)) {
+                    Intent intent = new Intent();
+                    intent.putExtra(RESULT, exocrModel);
+                    setResult(RESULT_CODE, intent);
+                    onBackPressed();
+                } else {
+                    text.setText("请确认正反面是否正确, 退出重试");
+                }
             });
         });
     }

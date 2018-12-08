@@ -88,7 +88,7 @@ public class OcrSurfaceView extends SurfaceView implements SurfaceHolder.Callbac
 //            myParam.setPictureSize(pictureSize.width, pictureSize.height);
 //            // 设置预浏尺寸，注意要在摄像头支持的范围内选择
 //            myParam.setPreviewSize(previewSize.width, previewSize.height);
-            parameters.setJpegQuality(70);
+            parameters.setJpegQuality(100);
             mCamera.setParameters(parameters);
 
             //mCamera.setPreviewCallback(this);
