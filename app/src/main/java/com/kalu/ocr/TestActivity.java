@@ -37,9 +37,6 @@ public class TestActivity extends Activity {
 
         final OcrSurfaceView surface = root.findViewById(R.id.surface);
         surface.setOnOcrChangeListener(exocrModel -> {
-
-            runOnUiThread(() -> {
-
                 if (exocrModel.isOk(isFront)) {
                     Intent intent = new Intent();
                     intent.putExtra(RESULT, exocrModel);
@@ -48,7 +45,6 @@ public class TestActivity extends Activity {
                 } else {
                     text.setText("请确认正反面是否正确, 退出重试");
                 }
-            });
         });
     }
 }
