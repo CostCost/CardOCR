@@ -81,10 +81,12 @@ public class OcrSurfaceView extends SurfaceView implements SurfaceHolder.Callbac
 //            L.e(TAG, "预览尺寸w===" + previewSize.width + ",h==="
 //                    + previewSize.height);
             // 获取摄像头支持的各种分辨率
-            //List<Camera.Size> list = parameters.getSupportedPictureSizes();
-            int width = 640;
-            int height = 480;
+//            List<Camera.Size> list = parameters.getSupportedPictureSizes();
 //            for (Camera.Size size : list) {
+//
+//                if (size.width == 320 && size.height == 240)
+//                    continue;
+//
 //                Log.e("kalu", "list ==> width = " + size.width + ", height = " + size.height);
 //                if (width == -1) {
 //                    width = size.width;
@@ -94,14 +96,16 @@ public class OcrSurfaceView extends SurfaceView implements SurfaceHolder.Callbac
 //                    height = size.height;
 //                }
 //            }
-            Log.e("kalu", "result ==> width = " + width + ", height = " + height);
+//            Log.e("kalu", "result ==> width = " + width + ", height = " + height);
 //            parameters.setPictureSize(width, height);
-            // parameters.setPreviewSize(640, 480);
+//            parameters.setPreviewSize(width, height);
             //parameters.setJpegQuality(50);
             mCamera.setParameters(parameters);
 
-            Camera.Size previewSize = parameters.getPreviewSize();
-            Log.e("kalu", "result ==> width = " + previewSize.width + ", height = " + previewSize.height);
+            final Camera.Size previewSize = parameters.getPreviewSize();
+            final int width = previewSize.width;
+            final int height = previewSize.height;
+            Log.e("kalu", "result ==> width = " + width + ", height = " + height);
 
             //mCamera.setPreviewCallback(this);
             mCamera.startPreview();
@@ -118,6 +122,8 @@ public class OcrSurfaceView extends SurfaceView implements SurfaceHolder.Callbac
 
                     final Message obtain = Message.obtain();
                     obtain.obj = data;
+                    obtain.arg1 = width;
+                    obtain.arg2 = height;
                     mHandler.removeCallbacksAndMessages(null);
                     mHandler.sendMessage(obtain);
                 }
@@ -171,9 +177,9 @@ public class OcrSurfaceView extends SurfaceView implements SurfaceHolder.Callbac
         public void handleMessage(Message msg) {
 
             final byte[] data = (byte[]) msg.obj;
+            final int width = msg.arg1;
+            final int height = msg.arg2;
             final byte[] bytes = EXOCREngine.obtainByte();
-            final int width = getWidth();
-            final int height = getHeight();
             final int code = EXOCREngine.decode(data, width, height, width, 1, bytes, bytes.length);
 
             if (code > 0) {
