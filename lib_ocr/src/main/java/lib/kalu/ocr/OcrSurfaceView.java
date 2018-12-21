@@ -14,6 +14,8 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.Toast;
 
+import java.util.List;
+
 import exocr.exocrengine.EXOCREngine;
 import exocr.exocrengine.EXOCRModel;
 
@@ -79,19 +81,27 @@ public class OcrSurfaceView extends SurfaceView implements SurfaceHolder.Callbac
 //            L.e(TAG, "预览尺寸w===" + previewSize.width + ",h==="
 //                    + previewSize.height);
             // 获取摄像头支持的各种分辨率
-//            List<Camera.Size> supportedPictureSizes = myParam.getSupportedPictureSizes();
-//            pictureSize = findSizeFromList(supportedPictureSizes, previewSize);
-//            if (pictureSize == null) {
-//                pictureSize = getPictureMaxSize(supportedPictureSizes, previewSize);
+            //List<Camera.Size> list = parameters.getSupportedPictureSizes();
+            int width = 640;
+            int height = 480;
+//            for (Camera.Size size : list) {
+//                Log.e("kalu", "list ==> width = " + size.width + ", height = " + size.height);
+//                if (width == -1) {
+//                    width = size.width;
+//                    height = size.height;
+//                } else if (size.width < width) {
+//                    width = size.width;
+//                    height = size.height;
+//                }
 //            }
-//            L.e(TAG, "照片尺寸w===" + pictureSize.width + ",h==="
-//                    + pictureSize.height);
-//            // 设置照片分辨率，注意要在摄像头支持的范围内选择
-//            myParam.setPictureSize(pictureSize.width, pictureSize.height);
-//            // 设置预浏尺寸，注意要在摄像头支持的范围内选择
-//            myParam.setPreviewSize(previewSize.width, previewSize.height);
-            parameters.setJpegQuality(100);
+            Log.e("kalu", "result ==> width = " + width + ", height = " + height);
+//            parameters.setPictureSize(width, height);
+            // parameters.setPreviewSize(640, 480);
+            //parameters.setJpegQuality(50);
             mCamera.setParameters(parameters);
+
+            Camera.Size previewSize = parameters.getPreviewSize();
+            Log.e("kalu", "result ==> width = " + previewSize.width + ", height = " + previewSize.height);
 
             //mCamera.setPreviewCallback(this);
             mCamera.startPreview();
