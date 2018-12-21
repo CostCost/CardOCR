@@ -1,7 +1,7 @@
 ##
 #### 识别字典
 ```
-https://github.com/BrooksWon/ocr_savingCard
+https://github.com/zhongfenglee/IDCardRecognition
 ```
 
 ##
