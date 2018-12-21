@@ -1,7 +1,7 @@
 ##
 #### 识别字典
 ```
-https://github.com/zhongfenglee/IDCardRecognition
+https://github.com/zhongfenglee/IDCardRecognition/tree/master/IDCardRecognition/libexidcard
 ```
 
 ##
