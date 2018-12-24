@@ -29,13 +29,15 @@ public class TestActivity extends Activity {
 
         final View root = LayoutInflater.from(getApplicationContext()).inflate(R.layout.activity_test, null);
         final boolean isFront = getIntent().getBooleanExtra(FRONT, true);
+        // step1
         final CaptureView capture = root.findViewById(R.id.captuer_scan);
         capture.setFront(isFront);
+        // step2
+        final OcrSurfaceView surface = root.findViewById(R.id.surface);
+        surface.calcuResult(this);
         setContentView(root);
 
         final TextView text = findViewById(R.id.text);
-
-        final OcrSurfaceView surface = root.findViewById(R.id.surface);
         surface.setOnOcrChangeListener(exocrModel -> {
                 if (exocrModel.isOk(isFront)) {
                     Intent intent = new Intent();

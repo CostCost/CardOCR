@@ -1,8 +1,11 @@
 package lib.kalu.ocr;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.PixelFormat;
 import android.hardware.Camera;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -10,11 +13,10 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.Toast;
-
-import java.util.List;
 
 import exocr.exocrengine.EXOCREngine;
 import exocr.exocrengine.EXOCRModel;
@@ -25,6 +27,7 @@ import exocr.exocrengine.EXOCRModel;
  */
 public class OcrSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
 
+    private int result = -1;
     private Camera mCamera;
 
     /**********************************************************************************************/
@@ -47,7 +50,30 @@ public class OcrSurfaceView extends SurfaceView implements SurfaceHolder.Callbac
         }
 
         getHolder().addCallback(this);
+        getHolder().setKeepScreenOn(true);
+        getHolder().setFormat(PixelFormat.TRANSPARENT);
         getHolder().setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+
+        final int height = MeasureSpec.getSize(heightMeasureSpec);
+        final int width = 640 * height / 480;
+        setMeasuredDimension(width, height);
+
+//        final int canvasHeight = MeasureSpec.getSize(heightMeasureSpec);
+//        final int canvasWidth = MeasureSpec.getSize(widthMeasureSpec);
+//
+//        if (canvasWidth < canvasHeight) {
+//            final int layerWidth = (int) (canvasWidth * 0.85f);
+//            final int layerHeight = (int) (layerWidth / 1.6f);
+//            setMeasuredDimension(layerWidth, layerHeight);
+//        } else {
+//            final int layerHeight = (int) (canvasHeight * 0.85f);
+//            final int layerWidth = (int) (layerHeight * 1.6f);
+//            setMeasuredDimension(layerWidth, layerHeight);
+//        }
     }
 
     /**********************************************************************************************/
@@ -55,62 +81,34 @@ public class OcrSurfaceView extends SurfaceView implements SurfaceHolder.Callbac
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
 
+        final PackageManager pm = getContext().getPackageManager();
+        final boolean hasACamera = pm.hasSystemFeature(PackageManager.FEATURE_CAMERA);
+        if (!hasACamera) {
+            Log.e("kalu", "没有发现相机");
+            return;
+        }
+
         try {
             mCamera = Camera.open();
-            mCamera.setPreviewDisplay(getHolder());
 
-            Camera.Parameters parameters = mCamera.getParameters();
-            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
-//            List<String> flashModes = myParam.getSupportedFlashModes();
-//            String flashMode = myParam.getFlashMode();
-//            // Check if camera flash exists
-//            if (flashModes == null) {
-//                return;
-//            }
-//            if (!Camera.Parameters.FLASH_MODE_OFF.equals(flashMode)) {
-//                // Turn off the flash
-//                if (flashModes.contains(Camera.Parameters.FLASH_MODE_OFF)) {
-//                    myParam.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
-//                } else {
-//                }
-//            }
-
-//            float percent = calcPreviewPercent();
-//            List<Camera.Size> supportedPreviewSizes = myParam.getSupportedPreviewSizes();
-//            previewSize = getPreviewMaxSize(supportedPreviewSizes, percent);
-//            L.e(TAG, "预览尺寸w===" + previewSize.width + ",h==="
-//                    + previewSize.height);
-            // 获取摄像头支持的各种分辨率
-//            List<Camera.Size> list = parameters.getSupportedPictureSizes();
-//            for (Camera.Size size : list) {
-//
-//                if (size.width == 320 && size.height == 240)
-//                    continue;
-//
-//                Log.e("kalu", "list ==> width = " + size.width + ", height = " + size.height);
-//                if (width == -1) {
-//                    width = size.width;
-//                    height = size.height;
-//                } else if (size.width < width) {
-//                    width = size.width;
-//                    height = size.height;
-//                }
-//            }
-//            Log.e("kalu", "result ==> width = " + width + ", height = " + height);
-//            parameters.setPictureSize(width, height);
-//            parameters.setPreviewSize(width, height);
-            //parameters.setJpegQuality(50);
+            Camera.Parameters parameters = mCamera.getParameters();//得到摄像头的参数
+            parameters.setJpegQuality(100);//设置照片的质量
+            parameters.setPreviewSize(640, 480);//设置预览尺寸
+            parameters.setPictureSize(640, 480);//设置照片尺寸
+            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);// 连续对焦模式
+            //Camera.Parameters.FOCUS_MODE_AUTO; //自动聚焦模式
+            //Camera.Parameters.FOCUS_MODE_INFINITY;//无穷远
+            //Camera.Parameters.FOCUS_MODE_MACRO;//微距
+            //Camera.Parameters.FOCUS_MODE_FIXED;//固定焦距
             mCamera.setParameters(parameters);
 
-            final Camera.Size previewSize = parameters.getPreviewSize();
-            final int width = previewSize.width;
-            final int height = previewSize.height;
-            Log.e("kalu", "result ==> width = " + width + ", height = " + height);
+            if (result != -1) {
+                mCamera.setDisplayOrientation(result);
+            }
 
-            //mCamera.setPreviewCallback(this);
-            mCamera.startPreview();
-            mCamera.cancelAutoFocus();
-            requestLayout();
+            mCamera.setPreviewDisplay(getHolder());//通过SurfaceView显示取景画面
+            mCamera.startPreview();//开始预览
+
             mCamera.setPreviewCallback(new Camera.PreviewCallback() {
                 @Override
                 public void onPreviewFrame(byte[] data, Camera camera) {
@@ -122,8 +120,8 @@ public class OcrSurfaceView extends SurfaceView implements SurfaceHolder.Callbac
 
                     final Message obtain = Message.obtain();
                     obtain.obj = data;
-                    obtain.arg1 = width;
-                    obtain.arg2 = height;
+                    obtain.arg1 = 640;
+                    obtain.arg2 = 480;
                     mHandler.removeCallbacksAndMessages(null);
                     mHandler.sendMessage(obtain);
                 }
@@ -131,6 +129,12 @@ public class OcrSurfaceView extends SurfaceView implements SurfaceHolder.Callbac
 
         } catch (Exception e) {
             Log.e("kalu", e.getMessage(), e);
+            if (mCamera != null) {
+                mCamera.setPreviewCallback(null);
+                mCamera.stopPreview();
+                mCamera.release();
+                mCamera = null;
+            }
         }
     }
 
@@ -212,6 +216,38 @@ public class OcrSurfaceView extends SurfaceView implements SurfaceHolder.Callbac
             }
         }
     };
+
+    public final void calcuResult(final Activity activity) {
+
+        Camera.CameraInfo info = new Camera.CameraInfo();
+        //获取摄像头信息
+        Camera.getCameraInfo(0, info);
+        int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
+        //获取摄像头当前的角度
+        int degrees = 0;
+        switch (rotation) {
+            case Surface.ROTATION_0:
+                degrees = 0;
+                break;
+            case Surface.ROTATION_90:
+                degrees = 90;
+                break;
+            case Surface.ROTATION_180:
+                degrees = 180;
+                break;
+            case Surface.ROTATION_270:
+                degrees = 270;
+                break;
+        }
+        if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+            // 前置摄像头
+            result = (info.orientation + degrees) % 360;
+            result = (360 - result) % 360; // compensate the mirror
+        } else {
+            // 后置摄像头
+            result = (info.orientation - degrees + 360) % 360;
+        }
+    }
 
     /**********************************************************************************/
 

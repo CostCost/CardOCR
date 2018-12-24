@@ -7,10 +7,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 
 /**
@@ -183,11 +181,11 @@ public final class CaptureView extends View {
     }
 
     @Override
-    public void setBackgroundTintList(@Nullable ColorStateList tint) {
+    public void setBackgroundTintList(ColorStateList tint) {
     }
 
     @Override
-    public void setBackgroundTintMode(@Nullable PorterDuff.Mode tintMode) {
+    public void setBackgroundTintMode(PorterDuff.Mode tintMode) {
     }
 
     /**********************************************************************************************/
