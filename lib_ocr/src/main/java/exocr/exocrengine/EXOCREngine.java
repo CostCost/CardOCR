@@ -2,7 +2,6 @@ package exocr.exocrengine;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.support.annotation.Keep;
 import android.util.Log;
 
 import java.io.File;
@@ -122,60 +121,41 @@ public final class EXOCREngine {
 
     /**********************************************************************************************/
 
-    @Keep
     private static native int nativeGetVersion(byte[] exversion);
 
-    @Keep
     private static native int nativeInit(byte[] dbpath);
 
-    @Keep
     private static native int nativeDone();
 
-    @Keep
     private static native int nativeCheckSignature(Context context);
 
-    @Keep
     private static native int nativeRecoIDCardBitmap(Bitmap bitmap, byte[] bresult, int maxsize);
 
-    @Keep
     private static native Bitmap nativeRecoIDCardStillImage(Bitmap bitmap, int tryhard, int bwantimg, byte[] bresult, int maxsize, int[] rets);
 
-    @Keep
     private static native Bitmap nativeRecoIDCardStillImageV2(Bitmap bitmap, int tryhard, int bwantimg, byte[] bresult, int maxsize, int[] rects, int[] rets);
 
-    @Keep
     private static native int nativeRecoIDCardRawdat(byte[] imgdata, int width, int height, int pitch, int imgfmt, byte[] bresult, int maxsize);
 
-    @Keep
     private static native Bitmap nativeGetIDCardStdImg(byte[] NV21, int width, int height, byte[] bresult, int maxsize, int[] rects);
 
-    @Keep
     private static native int nativeRecoVECardBitmap(Bitmap bitmap, byte[] bresult, int maxsize);
 
-    @Keep
     private static native Bitmap nativeRecoVECardStillImage(Bitmap bitmap, int tryhard, int bwantimg, byte[] bresult, int maxsize, int[] rets);
 
-    @Keep
     private static native Bitmap nativeRecoVECardStillImageV2(Bitmap bitmap, int tryhard, int bwantimg, byte[] bresult, int maxsize, int[] rects, int[] rets);
 
-    @Keep
     private static native int nativeRecoVECardRawdat(byte[] imgdata, int width, int height, int pitch, int imgfmt, byte[] bresult, int maxsize);
 
-    @Keep
     private static native Bitmap nativeGetVECardStdImg(byte[] NV21, int width, int height, byte[] bresult, int maxsize, int[] rects);
 
-    @Keep
     private static native Bitmap nativeRecoVE2CardNV21(byte[] imgnv21, int width, int height, int bwantimg, byte[] bresult, int maxsize, int[] rects, int[] rets);
 
-    @Keep
     private static native Bitmap nativeRecoVE2CardStillImage(Bitmap bitmap, int tryhard, int bwantimg, byte[] bresult, int maxsize, int[] rects, int[] rets);
 
-    @Keep
     private static native int nativeRecoScanLineRawdata(byte[] imgdata, int width, int height, int imgfmt, int lft, int rgt, int top, int btm, int nRecoType, byte[] bresult, int maxsize);
 
-    @Keep
     private static native Bitmap nativeRecoDRCardNV21(byte[] imgnv21, int width, int height, int bwantimg, byte[] bresult, int maxsize, int[] rects, int[] rets);
 
-    @Keep
     private static native Bitmap nativeRecoDRCardStillImage(Bitmap bitmap, int tryhard, int bwantimg, byte[] bresult, int maxsize, int[] rects, int[] rets);
 }
