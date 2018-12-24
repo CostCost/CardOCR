@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
@@ -47,16 +48,14 @@ public final class CaptureView extends View {
         mPaint.setStrokeJoin(Paint.Join.ROUND);
         mPaint.setStrokeCap(Paint.Cap.ROUND);
         mPaint.setFakeBoldText(true);
-        mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setColor(Color.parseColor("#cccccc"));
         final DisplayMetrics metrics = getContext().getResources().getDisplayMetrics();
         final float stroke = 2 * metrics.density;
         mPaint.setStrokeWidth(stroke);
-//        mPaint.setPathEffect(mDashPathEffect);
 
         if (canvasWidth < canvasHeight) {
 
-            final float layerWidth = canvasWidth * 0.85f;
+            final float layerWidth = canvasWidth * 0.83f;
             final float layerHeight = layerWidth / 1.6f;
             final float layerLeft = (canvasWidth - layerWidth) / 2;
             final float layerTop = (canvasHeight - layerHeight) / 2;
@@ -96,7 +95,7 @@ public final class CaptureView extends View {
 
         } else {
 
-            final float layerHeight = canvasHeight * 0.85f;
+            final float layerHeight = canvasHeight * 0.83f;
             final float layerWidth = layerHeight * 1.6f;
             final float layerLeft = (canvasWidth - layerWidth) / 2;
             final float layerTop = (canvasHeight - layerHeight) / 2;
