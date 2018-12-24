@@ -34,7 +34,6 @@ public class TestActivity extends Activity {
         capture.setFront(isFront);
         // step2
         final OcrSurfaceView surface = root.findViewById(R.id.surface);
-        surface.calcuResult(this);
         setContentView(root);
 
         final TextView text = findViewById(R.id.text);

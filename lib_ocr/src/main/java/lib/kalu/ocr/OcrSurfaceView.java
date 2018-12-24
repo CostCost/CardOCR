@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import exocr.exocrengine.EXOCREngine;
@@ -30,7 +31,6 @@ import exocr.exocrengine.EXOCRModel;
  */
 public class OcrSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
 
-    private int result = -1;
     private Camera mCamera;
 
     /**********************************************************************************************/
@@ -105,7 +105,34 @@ public class OcrSurfaceView extends SurfaceView implements SurfaceHolder.Callbac
             //Camera.Parameters.FOCUS_MODE_FIXED;//固定焦距
             mCamera.setParameters(parameters);
 
-            if (result != -1) {
+            Camera.CameraInfo info = new Camera.CameraInfo();
+            //获取摄像头信息
+            Camera.getCameraInfo(0, info);
+            WindowManager manager = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+            int rotation = manager.getDefaultDisplay().getRotation();
+            //获取摄像头当前的角度
+            int degrees = 0;
+            switch (rotation) {
+                case Surface.ROTATION_0:
+                    degrees = 0;
+                    break;
+                case Surface.ROTATION_90:
+                    degrees = 90;
+                    break;
+                case Surface.ROTATION_180:
+                    degrees = 180;
+                    break;
+                case Surface.ROTATION_270:
+                    degrees = 270;
+                    break;
+            }
+            if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+                // 前置摄像头
+                int result = (360 - ((info.orientation + degrees) % 360)) % 360; // compensate the mirror
+                mCamera.setDisplayOrientation(result);
+            } else {
+                // 后置摄像头
+                int result = (info.orientation - degrees + 360) % 360;
                 mCamera.setDisplayOrientation(result);
             }
 
@@ -219,38 +246,6 @@ public class OcrSurfaceView extends SurfaceView implements SurfaceHolder.Callbac
             }
         }
     };
-
-    public final void calcuResult(final Activity activity) {
-
-        Camera.CameraInfo info = new Camera.CameraInfo();
-        //获取摄像头信息
-        Camera.getCameraInfo(0, info);
-        int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
-        //获取摄像头当前的角度
-        int degrees = 0;
-        switch (rotation) {
-            case Surface.ROTATION_0:
-                degrees = 0;
-                break;
-            case Surface.ROTATION_90:
-                degrees = 90;
-                break;
-            case Surface.ROTATION_180:
-                degrees = 180;
-                break;
-            case Surface.ROTATION_270:
-                degrees = 270;
-                break;
-        }
-        if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-            // 前置摄像头
-            result = (info.orientation + degrees) % 360;
-            result = (360 - result) % 360; // compensate the mirror
-        } else {
-            // 后置摄像头
-            result = (info.orientation - degrees + 360) % 360;
-        }
-    }
 
     /**********************************************************************************/
 
