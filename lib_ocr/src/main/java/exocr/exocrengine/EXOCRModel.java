@@ -40,8 +40,6 @@ public final class EXOCRModel implements Serializable {
     public EXOCRModel() {
     }
 
-    ////////////////////////////////////////////////////////////
-
     public static final EXOCRModel decode(byte[] bResultBuf, int reslen) {
         byte code;
         int i, j, rdcount;
