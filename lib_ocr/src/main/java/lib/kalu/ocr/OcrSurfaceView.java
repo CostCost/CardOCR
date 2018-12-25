@@ -20,7 +20,6 @@ import android.widget.Toast;
 
 import exocr.exocrengine.EXOCREngine;
 import exocr.exocrengine.EXOCRModel;
-import exocr.exocrengine.OnExocrChangeListener;
 
 /**
  * description: 后置摄像头, ocr

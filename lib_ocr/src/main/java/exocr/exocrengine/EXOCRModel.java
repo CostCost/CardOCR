@@ -2,8 +2,6 @@ package exocr.exocrengine;
 
 import android.graphics.Bitmap;
 import android.graphics.Rect;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.util.Base64;
 import android.util.Log;
 
@@ -18,20 +16,16 @@ import java.io.UnsupportedEncodingException;
  */
 public final class EXOCRModel implements Serializable {
 
-    public String imgtype = "Preview";
-    //recognition data
-    public int type = 0;
-    public String cardnum;
-    public String name;
-    public String sex;
-    public String address;
-    public String nation;
-    public String birth;
-    public String office;
-    public String validdate;
-    public int nColorType;   //1 color, 0 gray
+    public int type = 0; // 正反面
+    public String cardnum; // 身份证号码
+    public String name; // 姓名
+    public String sex; //性别
+    public String address; // 住址
+    public String nation; //民族
+    public String birth; // 出生
+    public String office; // 签发单位
+    public String validdate; // 有效日期
 
-    // public Bitmap stdCardIm = null;
     public String base64bitmap;
 
     public Rect rtIDNum;
@@ -48,10 +42,6 @@ public final class EXOCRModel implements Serializable {
 
     ////////////////////////////////////////////////////////////
 
-    /**
-     * decode from stream
-     * return the len of decoded data int the buf
-     */
     public static final EXOCRModel decode(byte[] bResultBuf, int reslen) {
         byte code;
         int i, j, rdcount;
@@ -59,8 +49,6 @@ public final class EXOCRModel implements Serializable {
 
         EXOCRModel idcard = new EXOCRModel();
 
-        ////////////////////////////////////////////////////////////
-        //type
         rdcount = 0;
         idcard.type = bResultBuf[rdcount++];
         while (rdcount < reslen) {
@@ -75,8 +63,7 @@ public final class EXOCRModel implements Serializable {
             try {
                 content = new String(bResultBuf, j, i, "GBK");
             } catch (UnsupportedEncodingException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+               Log.e("kalu", e.getMessage(), e);
             }
 
             if (code == 0x21) {
@@ -136,14 +123,6 @@ public final class EXOCRModel implements Serializable {
         }
     }
 
-    public void SetViewType(String viewtype) {
-        this.imgtype = viewtype;
-    }
-
-    public void SetColorType(int aColorType) {
-        nColorType = aColorType;
-    }
-
     public void bitmapToBase64(Bitmap bitmap) {
 
         ByteArrayOutputStream baos = null;
@@ -186,12 +165,7 @@ public final class EXOCRModel implements Serializable {
 
     @Override
     public String toString() {
-        String text = "\nVeiwType = " + imgtype;
-        if (nColorType == 1) {
-            text += "  类型:  彩色";
-        } else {
-            text += "  类型:  扫描";
-        }
+        String text = "\n";
         if (type == 1) {
             text += "\nname:" + name;
             text += "\nnumber:" + cardnum;
