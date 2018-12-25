@@ -1,22 +1,22 @@
 package exocr.exocrengine;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.text.TextUtils;
+import android.util.Base64;
+import android.util.Log;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 
 /**
  * description: 数据字典
  * create by kalu on 2018/11/19 10:04
  */
-public final class EXOCRModel implements Parcelable {
+public final class EXOCRModel implements Serializable {
 
     public String imgtype = "Preview";
     //recognition data
@@ -32,7 +32,8 @@ public final class EXOCRModel implements Parcelable {
     public int nColorType;   //1 color, 0 gray
 
     // public Bitmap stdCardIm = null;
-    public String bitmapPath;
+    public String base64bitmap;
+
     public Rect rtIDNum;
     public Rect rtName;
     public Rect rtSex;
@@ -143,39 +144,34 @@ public final class EXOCRModel implements Parcelable {
         nColorType = aColorType;
     }
 
-    public void SetBitmap(final Context context, Bitmap bitmap) {
+    public void bitmapToBase64(Bitmap bitmap) {
 
-        if (null == bitmap)
-            return;
+        ByteArrayOutputStream baos = null;
 
         try {
 
-            final String local;
-
-            if (type == 1) {
-                local = context.getCacheDir().getAbsolutePath() + "/card_front.jpg";
-            } else if (type == 2) {
-                local = context.getCacheDir().getAbsolutePath() + "/card_back.jpg";
+            if (bitmap != null) {
+                baos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                baos.flush();
+                baos.close();
+                byte[] byteArray = baos.toByteArray();
+                base64bitmap = Base64.encodeToString(byteArray, Base64.DEFAULT);
             } else {
-                return;
+                base64bitmap = "error22";
             }
-
-            final File file = new File(local);
-            if (file.exists()) {
-                file.delete();
-            }
-            file.createNewFile();
-            FileOutputStream fos = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-            fos.flush();
-            fos.close();
-            this.bitmapPath = local;
-
-            if (null != bitmap) {
-                bitmap.recycle();
-            }
-
         } catch (IOException e) {
+            Log.e("jsjs", e.getMessage(), e);
+        } finally {
+
+            try {
+                if (baos != null) {
+                    baos.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+//            base64bitmap = "error33";
         }
     }
 
@@ -203,11 +199,11 @@ public final class EXOCRModel implements Parcelable {
             text += "\nnation:" + nation;
             text += "\nbirth:" + birth;
             text += "\naddress:" + address;
-            text += "\nbitmapPath:" + bitmapPath;
+            text += "\nbase64bitmap:" + base64bitmap;
         } else if (type == 2) {
             text += "\noffice:" + office;
             text += "\nValDate:" + validdate;
-            text += "\nbitmapPath:" + bitmapPath;
+            text += "\nbase64bitmap:" + base64bitmap;
         }
         return text;
     }
@@ -231,68 +227,4 @@ public final class EXOCRModel implements Parcelable {
     public final boolean isDecodeFront() {
         return type == 1;
     }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.imgtype);
-        dest.writeInt(this.type);
-        dest.writeString(this.cardnum);
-        dest.writeString(this.name);
-        dest.writeString(this.sex);
-        dest.writeString(this.address);
-        dest.writeString(this.nation);
-        dest.writeString(this.birth);
-        dest.writeString(this.office);
-        dest.writeString(this.validdate);
-        dest.writeInt(this.nColorType);
-        dest.writeString(this.bitmapPath);
-        dest.writeParcelable(this.rtIDNum, flags);
-        dest.writeParcelable(this.rtName, flags);
-        dest.writeParcelable(this.rtSex, flags);
-        dest.writeParcelable(this.rtNation, flags);
-        dest.writeParcelable(this.rtAddress, flags);
-        dest.writeParcelable(this.rtFace, flags);
-        dest.writeParcelable(this.rtOffice, flags);
-        dest.writeParcelable(this.rtValid, flags);
-    }
-
-    protected EXOCRModel(Parcel in) {
-        this.imgtype = in.readString();
-        this.type = in.readInt();
-        this.cardnum = in.readString();
-        this.name = in.readString();
-        this.sex = in.readString();
-        this.address = in.readString();
-        this.nation = in.readString();
-        this.birth = in.readString();
-        this.office = in.readString();
-        this.validdate = in.readString();
-        this.nColorType = in.readInt();
-        this.bitmapPath = in.readString();
-        this.rtIDNum = in.readParcelable(Rect.class.getClassLoader());
-        this.rtName = in.readParcelable(Rect.class.getClassLoader());
-        this.rtSex = in.readParcelable(Rect.class.getClassLoader());
-        this.rtNation = in.readParcelable(Rect.class.getClassLoader());
-        this.rtAddress = in.readParcelable(Rect.class.getClassLoader());
-        this.rtFace = in.readParcelable(Rect.class.getClassLoader());
-        this.rtOffice = in.readParcelable(Rect.class.getClassLoader());
-        this.rtValid = in.readParcelable(Rect.class.getClassLoader());
-    }
-
-    public static final Creator<EXOCRModel> CREATOR = new Creator<EXOCRModel>() {
-        @Override
-        public EXOCRModel createFromParcel(Parcel source) {
-            return new EXOCRModel(source);
-        }
-
-        @Override
-        public EXOCRModel[] newArray(int size) {
-            return new EXOCRModel[size];
-        }
-    };
 }

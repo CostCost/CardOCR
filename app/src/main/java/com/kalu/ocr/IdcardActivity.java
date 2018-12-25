@@ -2,8 +2,10 @@ package com.kalu.ocr;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -47,8 +49,7 @@ public final class IdcardActivity extends Activity {
 
         if (requestCode == REQUEST_CODE_FRONT && resultCode == TestActivity.RESULT_CODE && null != data) {
 
-            final Bundle extras = data.getExtras();
-            final EXOCRModel result = extras.getParcelable(TestActivity.RESULT);
+            final EXOCRModel result = (EXOCRModel) data.getSerializableExtra(TestActivity.RESULT);
             Log.e("kalu", "result = " + result.toString());
 
             final TextView name = findViewById(R.id.card_name);
@@ -70,12 +71,13 @@ public final class IdcardActivity extends Activity {
             number.setText(result.cardnum);
 
             final ImageView self = findViewById(R.id.card_self);
-            self.setImageBitmap(BitmapFactory.decodeFile(result.bitmapPath));
+            byte[] decode = Base64.decode(result.base64bitmap, Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(decode, 0, decode.length);
+            self.setImageBitmap(bitmap);
 
         } else if (requestCode == REQUEST_CODE_BACK && resultCode == TestActivity.RESULT_CODE && null != data) {
 
-            final Bundle extras = data.getExtras();
-            final EXOCRModel result = extras.getParcelable(TestActivity.RESULT);
+            final EXOCRModel result = (EXOCRModel) data.getSerializableExtra(TestActivity.RESULT);
             Log.e("kalu", "result = " + result.toString());
 
             final TextView office = findViewById(R.id.card_office);
@@ -85,7 +87,9 @@ public final class IdcardActivity extends Activity {
             date.setText(result.validdate);
 
             final ImageView country = findViewById(R.id.card_country);
-            country.setImageBitmap(BitmapFactory.decodeFile(result.bitmapPath));
+            byte[] decode = Base64.decode(result.base64bitmap, Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(decode, 0, decode.length);
+            country.setImageBitmap(bitmap);
         }
     }
 }

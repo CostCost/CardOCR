@@ -8,6 +8,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import lib.kalu.ocr.R;
 
@@ -24,16 +28,8 @@ public final class EXOCREngine {
         System.loadLibrary("exocrenginec");
     }
 
-    private static final byte[] bResultBuf = new byte[4096];
+    private static final byte[] info = new byte[4096];
     private static final int[] rects = new int[32];
-
-    public static final byte[] obtainByte() {
-        return bResultBuf;
-    }
-
-    public static final int[] obtainRect() {
-        return rects;
-    }
 
     public static final void clearDict() {
 
@@ -111,12 +107,64 @@ public final class EXOCREngine {
         return true;
     }
 
-    public static int decode(byte[] imgdata, int width, int height, int pitch, int imgfmt, byte[] bresult, int maxsize) {
-        return nativeRecoIDCardRawdat(imgdata, width, height, pitch, imgfmt, bresult, maxsize);
+    public static int decodeByte(byte[] image, byte[] info, int width, int height) {
+
+        if (null == image || null == info) {
+            return -1;
+        }
+
+        return nativeRecoIDCardRawdat(image, width, height, width, 1, info, info.length);
     }
 
-    public static Bitmap decode(byte[] NV21, int width, int height, byte[] bresult, int maxsize, int[] rects) {
-        return nativeGetIDCardStdImg(NV21, width, height, bresult, maxsize, rects);
+    public static EXOCRModel decodeByte(final byte[] image, final int width, final int height) {
+
+        if (null == image) {
+            return null;
+        }
+
+        final int code = nativeRecoIDCardRawdat(image, width, height, width, 1, info, info.length);
+        if (code < 0) {
+            return null;
+        } else {
+
+            final Bitmap bitmap = EXOCREngine.decodeBitmap(image, width, height);
+            if(null == bitmap){
+                return null;
+            }else{
+                final EXOCRModel decode = EXOCRModel.decode(info, code);
+                decode.bitmapToBase64(bitmap);
+                // Log.e("jsjs", decode.toString());
+
+                if(null != bitmap){
+                    bitmap.recycle();
+                }
+
+                return decode;
+            }
+
+//            try {
+//
+//                return Executors.newCachedThreadPool().submit(new Callable<EXOCRModel>() {
+//
+//                    public EXOCRModel call() {
+//
+//
+//                    }
+//                }).get();
+//
+//            }catch (Exception e){
+//                Log.e("jsjs", e.getMessage(), e);
+//                return null;
+//            }
+        }
+    }
+
+    public static int decodeImage(Bitmap bitmap, byte[] bytes) {
+        return nativeRecoIDCardBitmap(bitmap, bytes, bytes.length);
+    }
+
+    public static Bitmap decodeBitmap(byte[] image, int width, int height) {
+        return nativeGetIDCardStdImg(image, width, height, info, info.length, rects);
     }
 
     /**********************************************************************************************/

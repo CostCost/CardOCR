@@ -1,13 +1,9 @@
 package lib.kalu.ocr;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
 import android.os.Handler;
@@ -24,6 +20,7 @@ import android.widget.Toast;
 
 import exocr.exocrengine.EXOCREngine;
 import exocr.exocrengine.EXOCRModel;
+import exocr.exocrengine.OnExocrChangeListener;
 
 /**
  * description: 后置摄像头, ocr
@@ -196,7 +193,9 @@ public class OcrSurfaceView extends SurfaceView implements SurfaceHolder.Callbac
 
             if (null == listener || null == msg.obj)
                 return;
-            listener.onSucc((EXOCRModel) msg.obj);
+
+            final EXOCRModel model = (EXOCRModel) msg.obj;
+            listener.onSucc(model);
         }
     };
 
@@ -213,37 +212,20 @@ public class OcrSurfaceView extends SurfaceView implements SurfaceHolder.Callbac
             final byte[] data = (byte[]) msg.obj;
             final int width = msg.arg1;
             final int height = msg.arg2;
-            final byte[] bytes = EXOCREngine.obtainByte();
-            final int code = EXOCREngine.decode(data, width, height, width, 1, bytes, bytes.length);
 
-            if (code > 0) {
+            final EXOCRModel decode = EXOCREngine.decodeByte(data, width, height);
+            if (null == decode)
+                return;
 
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
+            final Message obtain = Message.obtain();
+            obtain.obj = decode;
+            obtain.arg1 = width;
+            obtain.arg2 = height;
+            mMain.removeCallbacksAndMessages(null);
+            mMain.sendMessage(obtain);
 
-                        try {
-
-                            final int[] rects = EXOCREngine.obtainRect();
-                            final Bitmap imcard = EXOCREngine.decode(data, width, height, bytes, bytes.length, rects);
-                            final EXOCRModel idcard = EXOCRModel.decode(bytes, code);
-                            idcard.SetBitmap(getContext().getApplicationContext(), imcard);
-
-                            final Message obtain = Message.obtain();
-                            obtain.obj = idcard;
-                            mMain.removeCallbacksAndMessages(null);
-                            mMain.sendMessage(obtain);
-
-                        } catch (Exception e) {
-                            Log.e("kalu", e.getMessage(), e);
-                        }
-                    }
-                }).start();
-
-                mHandler.removeCallbacksAndMessages(null);
-                //Log.e("kalu11", "handleMessage ==> size = " + data.length + ", code = " + code);
-                mThread.quit();
-            }
+            mHandler.removeCallbacksAndMessages(null);
+            mThread.quit();
         }
     };
 

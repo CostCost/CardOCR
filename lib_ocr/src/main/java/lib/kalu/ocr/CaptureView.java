@@ -169,7 +169,7 @@ public final class CaptureView extends View {
 
         final float strokeWidth = paint.getStrokeWidth();
         paint.setStyle(Paint.Style.FILL_AND_STROKE);
-        paint.setColor(Color.WHITE);
+        paint.setColor(Color.parseColor("#242424"));
 
         final float backgroundTop = layerTop - strokeWidth;
         final float backgroundLeft = layerLeft - strokeWidth;
