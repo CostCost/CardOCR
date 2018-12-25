@@ -61,7 +61,7 @@ public final class EXOCRModel implements Serializable {
             try {
                 content = new String(bResultBuf, j, i, "GBK");
             } catch (UnsupportedEncodingException e) {
-               Log.e("kalu", e.getMessage(), e);
+                Log.e("kalu", e.getMessage(), e);
             }
 
             if (code == 0x21) {
@@ -126,19 +126,14 @@ public final class EXOCRModel implements Serializable {
         ByteArrayOutputStream baos = null;
 
         try {
-
-            if (bitmap != null) {
-                baos = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                baos.flush();
-                baos.close();
-                byte[] byteArray = baos.toByteArray();
-                base64bitmap = Base64.encodeToString(byteArray, Base64.DEFAULT);
-            } else {
-                base64bitmap = "error22";
-            }
+            baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            baos.flush();
+            baos.close();
+            byte[] byteArray = baos.toByteArray();
+            base64bitmap = Base64.encodeToString(byteArray, Base64.DEFAULT);
         } catch (IOException e) {
-            Log.e("jsjs", e.getMessage(), e);
+            Log.e("kalu", e.getMessage(), e);
         } finally {
 
             try {
@@ -146,9 +141,8 @@ public final class EXOCRModel implements Serializable {
                     baos.close();
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.e("kalu", e.getMessage(), e);
             }
-//            base64bitmap = "error33";
         }
     }
 
