@@ -103,15 +103,6 @@ public final class EXOCREngine {
         return true;
     }
 
-    public static int decodeByte(byte[] image, byte[] info, int width, int height) {
-
-        if (null == image || null == info) {
-            return -1;
-        }
-
-        return nativeRecoIDCardRawdat(image, width, height, width, 1, info, info.length);
-    }
-
     public static EXOCRModel decodeByte(final byte[] image, final int width, final int height) {
 
         if (null == image) {
