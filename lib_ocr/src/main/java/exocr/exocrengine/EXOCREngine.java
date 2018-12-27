@@ -1,7 +1,10 @@
 package exocr.exocrengine;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.File;
@@ -103,6 +106,16 @@ public final class EXOCREngine {
         return true;
     }
 
+    /**********************************************************************************************/
+
+    /**
+     * 解析相机数据
+     *
+     * @param image  帧数据
+     * @param width  相机预览分辨率，宽
+     * @param height 相机预览分辨率，高
+     * @return
+     */
     public static EXOCRModel decodeByte(final byte[] image, final int width, final int height) {
 
         if (null == image) {
@@ -114,44 +127,115 @@ public final class EXOCREngine {
             return null;
         } else {
 
-            final Bitmap bitmap = EXOCREngine.decodeBitmap(image, width, height);
-            if(null == bitmap){
+            final Bitmap bitmap = nativeGetIDCardStdImg(image, width, height, info, info.length, rects);
+            if (null == bitmap) {
                 return null;
-            }else{
+            } else {
                 final EXOCRModel decode = EXOCRModel.decode(info, code);
                 decode.bitmapToBase64(bitmap);
                 // Log.e("jsjs", decode.toString());
 
-                if(null != bitmap){
+                if (null != bitmap) {
                     bitmap.recycle();
                 }
 
                 return decode;
             }
-
-//            try {
-//
-//                return Executors.newCachedThreadPool().submit(new Callable<EXOCRModel>() {
-//
-//                    public EXOCRModel call() {
-//
-//
-//                    }
-//                }).get();
-//
-//            }catch (Exception e){
-//                Log.e("jsjs", e.getMessage(), e);
-//                return null;
-//            }
         }
     }
 
-    public static int decodeImage(Bitmap bitmap, byte[] bytes) {
-        return nativeRecoIDCardBitmap(bitmap, bytes, bytes.length);
+    /**
+     * 解析本地图片
+     *
+     * @param bitmap
+     * @return
+     */
+    public static EXOCRModel decodeBitmap(Bitmap bitmap) {
+
+        final int code = nativeRecoIDCardBitmap(bitmap, info, info.length);
+        if (code < 0) {
+            final EXOCRModel decode = EXOCRModel.decode(info, code);
+            return decode;
+        } else {
+            return null;
+        }
     }
 
-    public static Bitmap decodeBitmap(byte[] image, int width, int height) {
-        return nativeGetIDCardStdImg(image, width, height, info, info.length, rects);
+    /**
+     * 解析本地图片
+     *
+     * @param is
+     * @return
+     */
+    public static EXOCRModel decodeBitmap(final InputStream is) {
+
+        if (null == is) {
+            return null;
+        }
+
+        final Bitmap bitmap = BitmapFactory.decodeStream(is);
+        if (null == bitmap) {
+            return null;
+        }
+
+        final int code = nativeRecoIDCardBitmap(bitmap, info, info.length);
+
+        if (code < 0) {
+            final EXOCRModel decode = EXOCRModel.decode(info, code);
+            return decode;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * 解析本地图片
+     *
+     * @param path
+     * @return
+     */
+    public static EXOCRModel decodeBitmap(final String path) {
+
+        if (TextUtils.isEmpty(path)) {
+            return null;
+        }
+
+        final Bitmap bitmap = BitmapFactory.decodeFile(path);
+        if (null == bitmap) {
+            return null;
+        }
+
+        final int code = nativeRecoIDCardBitmap(bitmap, info, info.length);
+
+        if (code < 0) {
+            final EXOCRModel decode = EXOCRModel.decode(info, code);
+            return decode;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * 解析本地图片
+     * @param resources
+     * @param resid
+     * @return
+     */
+    public static EXOCRModel decodeBitmap(final Resources resources, final int resid) {
+
+        final Bitmap bitmap = BitmapFactory.decodeResource(resources, resid);
+        if (null == bitmap) {
+            return null;
+        }
+
+        final int code = nativeRecoIDCardBitmap(bitmap, info, info.length);
+
+        if (code < 0) {
+            final EXOCRModel decode = EXOCRModel.decode(info, code);
+            return decode;
+        } else {
+            return null;
+        }
     }
 
     /**********************************************************************************************/
