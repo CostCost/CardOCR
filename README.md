@@ -4,6 +4,11 @@
 ![image](https://github.com/153437803/Ocr_IDCard/blob/master/ScreenRecord_20181116181153.gif )
 
 ##
+#### 参考
+```
+https://github.com/opencv/opencv [图像处理, 卡片边框定位识别]
+```
+##
 #### TODO
 ```
 1. opencv344, 实现LSD卡片边框直线检测
@@ -11,7 +16,8 @@
 ```
 
 ##
-#### 参考
+#### FAQ
 ```
-https://github.com/opencv/opencv [图像处理, 卡片边框定位识别]
+1. 证件扫描界面黑屏（没有适配动态权限，自己手动打开相机权限）
+2. 无法扫描识别信息（确认画面是否挤压变形，默认横屏640*480，自己修改试试，或者提Issues）
 ```
