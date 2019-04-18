@@ -1,6 +1,6 @@
 
 ##
-#### app
+#### apk
 ```
 https://github.com/153437803/CardOCR/blob/master/app-release.apk
 ```
