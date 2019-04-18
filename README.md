@@ -1,3 +1,10 @@
+
+##
+#### app
+```
+https://github.com/153437803/CardOCR/blob/master/app-release.apk
+```
+
 ##
 #### 效果预览
 ![image](https://github.com/153437803/Ocr_IDCard/blob/master/ScreenRecord_20181116181123.gif )
